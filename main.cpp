@@ -14,6 +14,16 @@ cin >> result[i];
 return result;
 }
 
+void
+find_minmax(vector<double> numbers, double &min, double &max) {
+min = numbers[0];
+max = min;
+for (int i = 1; i < numbers.size(); i++) {
+    if (numbers[i] < min) min = numbers[i];
+    if (numbers[i] > max) max = numbers[i];
+}
+}
+
 int main()
 {
     size_t number_count;
@@ -23,6 +33,7 @@ cin >> number_count;
 vector<double> numbers = input_numbers(number_count);
 
     double min, max;
+    find_minmax(numbers, min, max);
 
     size_t bin_count;
     cerr << "Enter bin count: ";
