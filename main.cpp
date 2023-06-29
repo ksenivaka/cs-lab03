@@ -5,7 +5,7 @@ using namespace std;
 const size_t SCREEN_WIDTH = 80;
 const size_t MAX_ASTERISK = SCREEN_WIDTH - 3 - 1;
 
-vector<double>
+const auto
 input_numbers(size_t count) {
 vector<double> result(count);
 for (size_t i = 0; i < count; i++) {
