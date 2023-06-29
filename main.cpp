@@ -4,22 +4,26 @@ using namespace std;
 
 const size_t SCREEN_WIDTH = 80;
 const size_t MAX_ASTERISK = SCREEN_WIDTH - 3 - 1;
+
+vector<double>
+input_numbers(size_t count) {
+vector<double> result(count);
+for (size_t i = 0; i < count; i++) {
+cin >> result[i];
+}
+return result;
+}
+
 int main()
 {
     size_t number_count;
-    cerr << "Enter number count: ";
-    cin >> number_count;
-    vector<double> numbers(number_count);
+cout << "Enter number count: ";
+cin >> number_count;
+
+vector<double> numbers = input_numbers(number_count);
+
     double min, max;
-    cerr << "Enter the numbers:\n";
-    cin >> numbers[0];
-    min = numbers[0];
-    max = numbers[0];
-    for (int i = 1; i < number_count; i++) {
-        cin >> numbers[i];
-        if (numbers[i] < min) min = numbers[i];
-        if (numbers[i] > max) max = numbers[i];
-    }
+
     size_t bin_count;
     cerr << "Enter bin count: ";
     cin >> bin_count;
