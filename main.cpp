@@ -49,6 +49,16 @@ double bin_size = (max - min) / bin_count;
     return bins;
 }
 
+void show_histogram_text(vector<size_t>bins){
+    for (double x : bins) {
+        //if (height < 100) cout << " ";
+        //if (height < 10) cout << " ";
+        cout << x << " | ";
+        for (int i = 0; i < x; i++) cout << "*";
+        cout << "\n";
+    }
+}
+
 int main()
 {
     size_t number_count;
@@ -62,13 +72,6 @@ const auto numbers = input_numbers(number_count);
     cin >> bin_count;
 
     const auto bins = make_histogram(numbers, bin_count);
-//    show_histogram_text(bins);
+    show_histogram_text(bins);
 
-    for (double count : bins) {
-        //if (height < 100) cout << " ";
-        //if (height < 10) cout << " ";
-        cout << count << " | ";
-        for (int i = 0; i < bins[i]; i++) cout << "*";
-        cout << "\n";
-    }
 }
