@@ -11,7 +11,7 @@ const auto TEXT_WIDTH = 50;
 const auto BIN_HEIGHT = 30;
 const auto BLOCK_WIDTH = 10;
 
-const vector<double> input_numbers_from_file(string filePath, int &bin_count) { 
+const vector<double> input_numbers_from_file(string filePath, size_t &bin_count) {
     ifstream file;
     file.open(filePath, ios::in);
     size_t count;
@@ -61,9 +61,18 @@ double bin_size = (max - min) / bin_count;
 
 string svg_begin(double width, double height) {
     string svg = "<?xml version='1.0' encoding='UTF-8'?>\n";
-svg.append("<svg " + "width='" + width + "' " +
- "height='" + height + "' " + "viewBox='0 0 " + width + " " + height + "' " 
- + "xmlns='http://www.w3.org/2000/svg'>\n");
+svg.append("<svg width='");
+svg.append(to_string(width));
+svg.append("' ");
+svg.append("height='");
+svg.append(to_string(height));
+svg.append("' ");
+svg.append("viewBox='0 0 ");
+svg.append(to_string(width));
+svg.append(" ");
+ svg.append(to_string(height));
+svg.append("' " );
+svg.append("xmlns='http://www.w3.org/2000/svg'>\n");
 return svg;
 }
 
@@ -73,16 +82,28 @@ string svg_end() {
 }
 
 string svg_rect(double x, double y, double width, double height){
-    string rect = "<rect x='" + x + "' y='" + y + 
-        "' width='" + width + "' height='" + height +
-        "' stroke='red' fill='#ffeeee'/>";
+    string rect = "<rect x='";
+   rect.append(to_string(x));
+    rect.append("' y='");
+   rect.append(to_string(y));
+  rect.append("' width='");
+  rect.append(to_string(width));
+   rect.append( "' height='");
+   rect.append( to_string(height));
+   rect.append( "' stroke='red' fill='#ffeeee'/>");
     return rect;
 }
 
 string svg_text(double left, double baseline, string text) {
-    string text =  "<text x='" + left + "' " +
-        baseline + "='35'>" + text + "</text>";
-    return text;
+    string txt =  "<text x='" ;
+     txt.append(to_string(left));
+     txt.append("' y='");
+       txt.append(to_string(baseline));
+       txt.append("'>");
+       // txt.append( "35'>" );
+        txt.append(text);
+         txt.append(  "</text>");
+    return txt;
 }
 
 void show_histogram_svg(const vector<size_t>& bins, string filePath) {
@@ -111,6 +132,6 @@ int main()
     const auto numbers = input_numbers_from_file(fp, bin_count);
 
     const auto bins = make_histogram(numbers, bin_count);
-    show_histogram_svg(bins);
+    show_histogram_svg(bins, "1.svg");
 
 }
