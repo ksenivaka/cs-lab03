@@ -81,7 +81,7 @@ string svg_end() {
     return svg;
 }
 
-string svg_rect(double x, double y, double width, double height){
+string svg_rect(double x, double y, double width, double height, string stroke = "red", string fill = "#ffeeee"){
     string rect = "<rect x='";
    rect.append(to_string(x));
     rect.append("' y='");
@@ -90,7 +90,11 @@ string svg_rect(double x, double y, double width, double height){
   rect.append(to_string(width));
    rect.append( "' height='");
    rect.append( to_string(height));
-   rect.append( "' stroke='red' fill='#ffeeee'/>");
+   rect.append( "' stroke='");
+    rect.append(stroke);
+    rect.append("' fill='");
+    rect.append(fill);
+    rect.append("'/>");
     return rect;
 }
 
@@ -106,13 +110,22 @@ string svg_text(double left, double baseline, string text) {
     return txt;
 }
 
+int find_max(const vector<size_t>& bins) {
+size_t max = bins[0];
+for (int i = 1; i < bins.size(); i++) {
+    if (bins[i] > max) max = bins[i];
+}
+return max;
+}
+
 void show_histogram_svg(const vector<size_t>& bins, string filePath) {
     ofstream svg_output;
     svg_output.open(filePath, ios::out | ios::trunc);
     svg_output << svg_begin(IMAGE_WIDTH, IMAGE_HEIGHT);
     double top = 0;
+    size_t max = find_max(bins);
     for (size_t bin : bins) {
-        const double bin_width = BLOCK_WIDTH * bin;
+        const double bin_width = (IMAGE_HEIGHT) *  static_cast<double>(bin) / max;
         svg_output << svg_text(TEXT_LEFT, top + TEXT_BASELINE, to_string(bin));
         svg_output << svg_rect(TEXT_WIDTH, top, bin_width, BIN_HEIGHT);
         top += BIN_HEIGHT;
