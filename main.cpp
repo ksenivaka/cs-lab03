@@ -1,21 +1,31 @@
 #include <iostream>
+#include <fstream>
+#include <string>
 #include <vector>
 using namespace std;
+const auto IMAGE_WIDTH = 400;
+const auto IMAGE_HEIGHT = 300;
+const auto TEXT_LEFT = 20;
+const auto TEXT_BASELINE = 20;
+const auto TEXT_WIDTH = 50;
+const auto BIN_HEIGHT = 30;
+const auto BLOCK_WIDTH = 10;
 
-const size_t SCREEN_WIDTH = 80;
-const size_t MAX_ASTERISK = SCREEN_WIDTH - 3 - 1;
-
-const vector<double>
-input_numbers(size_t count) {
-vector<double> result(count);
-for (size_t i = 0; i < count; i++) {
-cin >> result[i];
+const vector<double> input_numbers_from_file(string filePath, int &bin_count) { 
+    ifstream file;
+    file.open(filePath, ios::in);
+    size_t count;
+    file >> count;
+    vector<double> result(count);
+    for (size_t i = 0; i < count; i++) {
+       file >> result[i];
+    }
+    file >> bin_count;
+    file.close();
+    return result;
 }
-return result;
-}
 
-void
-find_minmax(const vector<double>& numbers, double &min, double &max) {
+void find_minmax(const vector<double>& numbers, double &min, double &max) {
 min = numbers[0];
 max = min;
 for (int i = 1; i < numbers.size(); i++) {
@@ -49,47 +59,56 @@ double bin_size = (max - min) / bin_count;
     return bins;
 }
 
-void show_histogram_text(vector<size_t>bins){
-    for (double x : bins) {
-        //if (height < 100) cout << " ";
-        //if (height < 10) cout << " ";
-        cout << x << " | ";
-        for (int i = 0; i < x; i++) cout << "*";
-        cout << "\n";
+string svg_begin(double width, double height) {
+    string svg = "<?xml version='1.0' encoding='UTF-8'?>\n";
+svg.append("<svg " + "width='" + width + "' " +
+ "height='" + height + "' " + "viewBox='0 0 " + width + " " + height + "' " 
+ + "xmlns='http://www.w3.org/2000/svg'>\n");
+return svg;
+}
+
+string svg_end() {
+    string svg = "</svg>\n";
+    return svg;
+}
+
+string svg_rect(double x, double y, double width, double height){
+    string rect = "<rect x='" + x + "' y='" + y + 
+        "' width='" + width + "' height='" + height +
+        "' stroke='red' fill='#ffeeee'/>";
+    return rect;
+}
+
+string svg_text(double left, double baseline, string text) {
+    string text =  "<text x='" + left + "' " +
+        baseline + "='35'>" + text + "</text>";
+    return text;
+}
+
+void show_histogram_svg(const vector<size_t>& bins, string filePath) {
+    ofstream svg_output;
+    svg_output.open(filePath, ios::out | ios::trunc);
+    svg_output << svg_begin(IMAGE_WIDTH, IMAGE_HEIGHT);
+    double top = 0;
+    for (size_t bin : bins) {
+        const double bin_width = BLOCK_WIDTH * bin;
+        svg_output << svg_text(TEXT_LEFT, top + TEXT_BASELINE, to_string(bin));
+        svg_output << svg_rect(TEXT_WIDTH, top, bin_width, BIN_HEIGHT);
+        top += BIN_HEIGHT;
     }
-}
-
-void
-svg_begin(double width, double height) {
-cout << "<?xml version='1.0' encoding='UTF-8'?>\n";
-cout << "<svg ";
-cout << "width='" << width << "' ";
-cout << "height='" << height << "' ";
-cout << "viewBox='0 0 " << width << " " << height << "' ";
-cout << "xmlns='http://www.w3.org/2000/svg'>\n";
-}
-void
-svg_end() {
-cout << "</svg>\n";
-}
-
-void
-show_histogram_svg(const vector<size_t>& bins) {
-svg_begin(400, 300);
-svg_end();
+    svg_output << svg_text(TEXT_LEFT, TEXT_BASELINE, to_string(bins[0]));
+    svg_output << svg_end();
+    svg_output.close();
 }
 
 int main()
 {
-    size_t number_count;
-cout << "Enter number count: ";
-cin >> number_count;
-
-const auto numbers = input_numbers(number_count);
-
+    string fp;
+    cout << "Enter input file path: ";
+    cin >> fp;
     size_t bin_count;
-    cerr << "Enter bin count: ";
-    cin >> bin_count;
+
+    const auto numbers = input_numbers_from_file(fp, bin_count);
 
     const auto bins = make_histogram(numbers, bin_count);
     show_histogram_svg(bins);
