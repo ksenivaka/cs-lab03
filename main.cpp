@@ -96,15 +96,36 @@ string svg_rect(double x, double y, double width, double height, string stroke =
     return rect;
 }
 
-string svg_text(double left, double baseline, string text) {
+string svg_text(double left, double baseline, string text, string decor = "none") {
     string txt =  "<text x='" ;
      txt.append(to_string(left));
      txt.append("' y='");
        txt.append(to_string(baseline));
+       string mas[] = { "none", "underline", "overline", "line-through"};
+       bool ok = false;
+       for (int i = 0; i < 4; i++) {
+                if (decor == mas[i]) {
+                    ok = true;
+                    break;
+                }
+            }
+       if (!ok) {
+            cout << "\n Choose text style correctly: none, underline, overline, line-through.\n";
+            cin >> decor;
+            for (int i = 0; i < 4; i++) {
+                if (decor == mas[i]) {
+                    ok = true;
+                    break;
+                }
+            }
+            if (!ok) decor = "none";
+       }
+        txt.append("' text-decoration= '");
+        txt.append(decor);
        txt.append("'>");
-       // txt.append( "35'>" );
         txt.append(text);
          txt.append(  "</text>");
+
     return txt;
 }
 
@@ -124,11 +145,11 @@ void show_histogram_svg(const vector<size_t>& bins, string filePath) {
     size_t max = find_max(bins);
     for (size_t bin : bins) {
         const double bin_width = (IMAGE_HEIGHT) *  static_cast<double>(bin) / max;
-        svg_output << svg_text(TEXT_LEFT, top + TEXT_BASELINE, to_string(bin));
+        svg_output << svg_text(TEXT_LEFT, top + TEXT_BASELINE, to_string(bin), "overline");
         svg_output << svg_rect(TEXT_WIDTH, top, bin_width, BIN_HEIGHT);
         top += BIN_HEIGHT;
     }
-    svg_output << svg_text(TEXT_LEFT, TEXT_BASELINE, to_string(bins[0]));
+    svg_output << svg_text(TEXT_LEFT, TEXT_BASELINE, to_string(bins[0]), "overline");
     svg_output << svg_end();
     svg_output.close();
 }
